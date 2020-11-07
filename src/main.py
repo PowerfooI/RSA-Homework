@@ -1,7 +1,3 @@
-from rsa.gcd import * 
+import rsa 
 
-print(gcd(16, 24))
-
-print(ext_euclid(16, 24))
-
-
+print(rsa.newkeys(1024))

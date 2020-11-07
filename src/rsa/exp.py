@@ -10,6 +10,7 @@ def quick_exp(base, exponent):
         exponent //= 2 
     return res 
 
+
 def quick_exp_mod(base, exponent, modulo):
     ''' Montgomery reduction algorithm
         Compute the (base ^ exponent) % modulo with complexity O(logn)

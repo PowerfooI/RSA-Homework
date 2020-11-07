@@ -17,3 +17,12 @@ func QuickExpMod(base big.Int, exponent big.Int, modulo big.Int) *big.Int {
 	return res
 }
 
+func ExtEuclid(a big.Int, b big.Int) (*big.Int, *big.Int, *big.Int) {
+	if b.Cmp(big.NewInt(0)) == 0{
+		return big.NewInt(1), big.NewInt(0), &a
+	} else {
+		u, v, q := ExtEuclid(b, *a.Mod(&a, &b))
+		u, v = v, u.Sub(u, a.Div(&a, &b).Mul(&a, v))
+		return u, v, q
+	}
+}

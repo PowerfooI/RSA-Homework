@@ -1,1 +1,5 @@
-package golangv
+package main
+
+func main() {
+
+}
