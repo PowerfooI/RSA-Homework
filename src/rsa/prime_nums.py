@@ -14,6 +14,8 @@ for i in range(30, 10240):
     if flag:
         prime_nums_lt_10k.append(i)
 
+len_of_pretest = len(prime_nums_lt_10k)
+
 pq_arr = [0, 0, 0, 0, 0, 0, 0, 0]
 # print(prime_nums_lt_10k)
 
@@ -24,7 +26,7 @@ def check_pq():
 
 def miller_rabin_test(s, p, d, times=3):
     for _ in range(times):
-        a = random.randint(2, p - 1)
+        a = prime_nums_lt_10k[random.randint(0, len_of_pretest-1)]
         for r in range(s):
             r1 = exp.quick_exp_mod(a, d, p)
             r2 = exp.quick_exp_mod(a, exp.quick_exp(2, r) * d, p)
@@ -65,10 +67,15 @@ def random_big_prime_num(size, pos):
     while True:
         # print('get one random p')
         # pre-check 
+        pre_check_flag = True 
         for n in prime_nums_lt_10k:
             if p % n == 0:
-                continue
+                pre_check_flag = False
+                break
                 # Miller-Rabin test
+        if not pre_check_flag:
+            p+=2
+            continue
         n_minus = p - 1
         s = 0
         while n_minus % 2 == 0:
