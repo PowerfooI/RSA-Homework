@@ -17,13 +17,15 @@ func TestPKCS1Padding(t *testing.T) {
 	SetUp()
 	pub, pri := GenRSAKeys(768, 4)
 	fmt.Printf("n = %v \np = %v \nq = %v \nd = %v \n", pub.NValue, pri.PValue, pri.QValue, pri.DValue)
-	originalInput := "hello rsa ! 123456789012345678901234567890123456789012345678901234567890"
+	originalInput := "hello pig! 123456789012345678901234567890123456789012345678901234567890"
+
 	blocks := PKCS1Padding(originalInput, 512)
 	ec := EncryptBlocks(pub, blocks)
-	fmt.Println(ec)
+	fmt.Println("og =", originalInput)
+	fmt.Println("ec =", ec)
 	deBlocks := DecryptBlocks(pri, ec)
 	dc := PKCS1Depadding(deBlocks, 512)
-	fmt.Println(dc)
+	fmt.Println("dc =", dc)
 }
 
 func Test1(t *testing.T) {

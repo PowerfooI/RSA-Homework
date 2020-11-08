@@ -20,11 +20,11 @@ func EncryptBlocks(key *PublicKey, blocks *Blocks) string {
 		blockOutput := ec.Text(16)
 		outputLen := len(blockOutput)
 		if outputLen < blockOutputLength {
-			var tmpBytes string
+			var preZeros string
 			for i:=outputLen;i<blockOutputLength;i++ {
-				tmpBytes += "0"
+				preZeros += "0"
 			}
-			blockOutput = tmpBytes + blockOutput
+			blockOutput = preZeros + blockOutput
 		}
 		res += blockOutput
 	}
