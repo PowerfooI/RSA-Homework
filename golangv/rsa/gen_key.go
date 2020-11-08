@@ -2,14 +2,6 @@ package rsa
 
 import "math/big"
 
-func EncryptMsg(key *PublicKey, msg *big.Int) *big.Int {
-	return QuickExpMod(new(big.Int).Set(msg), new(big.Int).Set(key.EValue), new(big.Int).Set(key.NValue))
-}
-
-func DecryptMsg(key *PrivateKey, eMsg *big.Int) *big.Int {
-	return QuickExpMod(new(big.Int).Set(eMsg), new(big.Int).Set(key.DValue), new(big.Int).Set(key.NValue))
-}
-
 func GenRSAKeys(nBitSize, nGoRoutines int) (*PublicKey, *PrivateKey) {
 	p, q := ProducePQ(nBitSize, nGoRoutines)
 	n := new(big.Int).Mul(p, q)

@@ -15,3 +15,9 @@ type PrivateKey struct {
 	PValue *big.Int
 	QValue *big.Int
 }
+
+type Blocks struct {
+	NByteSize   int
+	PaddingSize int
+	byteMatrix  [][]byte
+}
