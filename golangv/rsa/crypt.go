@@ -40,6 +40,7 @@ func DecryptBlocks(key *PrivateKey, dc string) *Blocks {
 	byteMatrix := make([][]byte, 0)
 
 	tmpSize := blockOutputLength
+
 	for cur:=0;cur<lenOfInput; {
 		if cur + blockOutputLength > lenOfInput {
 			tmpSize = lenOfInput - cur
@@ -53,12 +54,6 @@ func DecryptBlocks(key *PrivateKey, dc string) *Blocks {
 
 		cur += tmpSize
 	}
-
-	//rawHexInput := new(big.Int)
-	//rawHexInput.SetString(dc, 16)
-	//dcBytes := rawHexInput.Bytes()
-	//
-	//blockSize := key.Length / 8
 
 	dcb.byteMatrix = byteMatrix
 	return dcb

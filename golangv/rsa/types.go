@@ -17,7 +17,5 @@ type PrivateKey struct {
 }
 
 type Blocks struct {
-	NByteSize   int
-	PaddingSize int
 	byteMatrix  [][]byte
 }

@@ -42,9 +42,7 @@ func MillerRabinTest(p *big.Int, pBitSize int) bool {
 	case pBitSize >= 512:
 		times = 5
 	case pBitSize >= 384:
-		times = 6
-	//case pBitSize >= 256:
-	//	times = 7
+		times = 7
 	default:
 		times = 10
 	}
