@@ -38,7 +38,7 @@ func MillerRabinTest(p *big.Int, pBitSize int) bool {
 	var times int
 	switch {
 	case pBitSize >= 1024:
-		times = 4
+		times = 3
 	case pBitSize >= 512:
 		times = 5
 	case pBitSize >= 384:
@@ -57,11 +57,11 @@ func MillerRabinTest(p *big.Int, pBitSize int) bool {
 	pMinusOne := new(big.Int).Sub(p, one) // p - 1
 	for times > 0 {
 		a := genRandomAinTest(new(big.Int).Sub(p, one))
-		r1 := QuickExpMod(new(big.Int).Set(a), new(big.Int).Set(d), new(big.Int).Set(p))
+		r1 := quickExpMod(a, d, p)
 		r1isOdd := r1.Cmp(one) == 0
 		rCount := 0
 		for r:= 0;r<s;r++ {
-			r2 := QuickExpMod(new(big.Int).Set(a), new(big.Int).Mul(QuickExp(big.NewInt(2), big.NewInt(int64(r))), d), new(big.Int).Set(p))
+			r2 := quickExpMod(a, new(big.Int).Mul(quickExp(big.NewInt(2), big.NewInt(int64(r))), d), p)
 			if !r1isOdd && r2.Cmp(pMinusOne) != 0 {
 				rCount++
 			} else {
@@ -99,7 +99,7 @@ func GenRandomPrimeNumber(pBitSize int) *big.Int {
 	}
 }
 
-func ProducePQ(nBitSize, nGoroutines int) (*big.Int, *big.Int) {
+func producePQ(nBitSize, nGoroutines int) (*big.Int, *big.Int) {
 	kBits := nBitSize / 2
 	pqChan := make(chan *big.Int)
 	for i:=0;i<nGoroutines;i++ {

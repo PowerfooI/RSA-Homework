@@ -7,7 +7,7 @@ var (
 )
 
 // 公钥加密类型的padding
-func PKCS1Padding(rawTextInput string, nBitSize int) *Blocks {
+func paddingPKCS1(rawTextInput string, nBitSize int, isPublic bool) *Blocks {
 	nByteSize := nBitSize / 8
 	pieceSize := nByteSize - paddingSize
 	paddedBlocks := &Blocks{}
@@ -19,10 +19,19 @@ func PKCS1Padding(rawTextInput string, nBitSize int) *Blocks {
 
 	tmpSize := pieceSize
 	for cur := 0; cur < lenOfInput; {
-		paddingContent := []byte{0x00, 0x02}
-		// 11 - 2 - 1 = 8
-		for i := 0; i < 8; i++ {
-			paddingContent = append(paddingContent, byte(rand.Intn(0xff)))
+		var paddingContent []byte
+		if isPublic {
+			paddingContent = []byte{0x00, 0x02}
+			// 11 - 2 - 1 = 8
+			for i := 0; i < 8; i++ {
+				paddingContent = append(paddingContent, byte(rand.Intn(0xff)))
+			}
+		} else {
+			paddingContent = []byte{0x00, 0x01}
+			// 11 - 2 - 1 = 8
+			for i := 0; i < 8; i++ {
+				paddingContent = append(paddingContent, byte(0xff))
+			}
 		}
 		paddingContent = append(paddingContent, byte(0x00))
 
@@ -37,7 +46,16 @@ func PKCS1Padding(rawTextInput string, nBitSize int) *Blocks {
 			copy(tmpByteArray, input[cur:cur+tmpSize])
 			byteMatrix = append(byteMatrix, append(paddingContent, append(tmpByteArray, backPaddingContent...)...))
 		} else if cur+pieceSize == lenOfInput {
+			tmpByteArray := make([]byte, tmpSize)
+			copy(tmpByteArray, input[cur:cur+tmpSize])
+			byteMatrix = append(byteMatrix, append(paddingContent, tmpByteArray...))
 
+			// 恰好相等时填充一整块
+			var backPaddingContent []byte
+			for i:=0;i<pieceSize;i++ {
+				backPaddingContent = append(backPaddingContent, byte(pieceSize))
+			}
+			byteMatrix = append(byteMatrix, append(paddingContent, backPaddingContent...))
 		} else {
 			tmpByteArray := make([]byte, tmpSize)
 			copy(tmpByteArray, input[cur:cur+tmpSize])
@@ -49,7 +67,7 @@ func PKCS1Padding(rawTextInput string, nBitSize int) *Blocks {
 	return paddedBlocks
 }
 
-func PKCS1Depadding(blocks *Blocks) string {
+func depaddingPKCS1(blocks *Blocks) string {
 	nBlocks := len(blocks.byteMatrix)
 	blockLen := len(blocks.byteMatrix[0])
 	res := ""

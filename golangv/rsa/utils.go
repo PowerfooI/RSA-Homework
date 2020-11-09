@@ -21,7 +21,6 @@ var (
 func SetUp()  {
 	rand.Seed(time.Now().Unix())
 	genPreTestList()
-
 }
 
 func genPreTestList() {
@@ -39,7 +38,11 @@ func genPreTestList() {
 	}
 }
 
-func QuickExp(base, exponent *big.Int) *big.Int {
+func quickExp(originalBase, originalExponent *big.Int) *big.Int {
+	// 复制初始值，防止产生副作用
+	base := new(big.Int).Set(originalBase)
+	exponent := new(big.Int).Set(originalExponent)
+
 	res := big.NewInt(1)
 	for exponent.Cmp(one)>0 {
 		q, m := exponent.DivMod(exponent, two, new(big.Int))
@@ -52,7 +55,12 @@ func QuickExp(base, exponent *big.Int) *big.Int {
 	return res
 }
 
-func QuickExpMod(base, exponent, modulo *big.Int) *big.Int {
+func quickExpMod(originalBase, originalExponent, originalModulo *big.Int) *big.Int {
+	// 复制初始值，防止产生副作用
+	base := new(big.Int).Set(originalBase)
+	exponent := new(big.Int).Set(originalExponent)
+	modulo := new(big.Int).Set(originalModulo)
+
 	res := big.NewInt(1)
 	for exponent.Cmp(zero)>0 {
 		q, m := exponent.DivMod(exponent, two, new(big.Int))
@@ -65,11 +73,15 @@ func QuickExpMod(base, exponent, modulo *big.Int) *big.Int {
 	return res
 }
 
-func ExtEuclid(a, b *big.Int) (*big.Int, *big.Int, *big.Int) {
+func extEuclid(oa, ob *big.Int) (*big.Int, *big.Int, *big.Int) {
+	// 复制初始值，防止产生副作用
+	a := new(big.Int).Set(oa)
+	b := new(big.Int).Set(ob)
+
 	if b.Cmp(zero) == 0{
-		return big.NewInt(1), big.NewInt(0), new(big.Int).Set(a)
+		return big.NewInt(1), big.NewInt(0), a
 	} else {
-		u, v, q := ExtEuclid(b, new(big.Int).Mod(a, b))
+		u, v, q := extEuclid(b, new(big.Int).Mod(a, b))
 		u, v = v, new(big.Int).Sub(u, new(big.Int).Mul(new(big.Int).Div(a, b), v))
 		return u, v, q
 	}
