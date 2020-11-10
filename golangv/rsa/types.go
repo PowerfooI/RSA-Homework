@@ -3,17 +3,17 @@ package rsa
 import "math/big"
 
 type PublicKey struct {
-	NLength int
-	NValue  *big.Int
-	EValue  *big.Int
+	NLength int      `json:"n_len"`
+	NValue  *big.Int `json:"n_val"`
+	EValue  *big.Int `json:"e_val"`
 }
 
 type PrivateKey struct {
-	NLength int
-	NValue  *big.Int
-	DValue  *big.Int
-	PValue  *big.Int
-	QValue  *big.Int
+	NLength int      `json:"n_len"`
+	NValue  *big.Int `json:"n_val"`
+	DValue  *big.Int `json:"d_val"`
+	PValue  *big.Int `json:"p_val"`
+	QValue  *big.Int `json:"q_val"`
 }
 
 type Blocks struct {
@@ -25,7 +25,6 @@ type Key interface {
 	getNLength() int
 	isPublic() bool
 }
-
 
 func (k *PublicKey) encodeBigInt(msg *big.Int) *big.Int {
 	return quickExpMod(msg, k.EValue, k.NValue)
@@ -50,4 +49,3 @@ func (k *PrivateKey) getNLength() int {
 func (k *PrivateKey) isPublic() bool {
 	return false
 }
-

@@ -6,14 +6,6 @@ import (
 	"testing"
 )
 
-func BenchmarkGenRSAKeys(b *testing.B) {
-	SetUp()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		GenRSAKeys(768, 2)
-	}
-}
-
 func TestPKCS1Padding(t *testing.T) {
 	SetUp()
 	pub, pri := GenRSAKeys(512, 4)
