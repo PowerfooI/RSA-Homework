@@ -23,7 +23,7 @@ type Blocks struct {
 type Key interface {
 	encodeBigInt(*big.Int) *big.Int
 	getNLength() int
-	isPublic() bool
+	IsPublic() bool
 }
 
 func (k *PublicKey) encodeBigInt(msg *big.Int) *big.Int {
@@ -34,7 +34,7 @@ func (k *PublicKey) getNLength() int {
 	return k.NLength
 }
 
-func (k *PublicKey) isPublic() bool {
+func (k *PublicKey) IsPublic() bool {
 	return true
 }
 
@@ -46,6 +46,6 @@ func (k *PrivateKey) getNLength() int {
 	return k.NLength
 }
 
-func (k *PrivateKey) isPublic() bool {
+func (k *PrivateKey) IsPublic() bool {
 	return false
 }

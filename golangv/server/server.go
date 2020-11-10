@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"golangv/rsa"
 )
 
 type Server struct {
@@ -21,5 +22,6 @@ func NewServer() *Server {
 }
 
 func (s *Server) Run() error {
+	rsa.SetUp()
 	return s.g.Run()
 }

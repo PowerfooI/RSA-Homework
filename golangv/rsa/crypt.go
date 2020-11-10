@@ -26,24 +26,24 @@ func decodeBlocks(key Key, deText string) *Blocks {
 	byteMatrix := make([][]byte, 0)
 
 	tmpSize := blockByteLength
-	for cur:=0;cur<lenOfInput; {
-		if cur + blockByteLength > lenOfInput {
+	for cur := 0; cur < lenOfInput; {
+		if cur+blockByteLength > lenOfInput {
 			tmpSize = lenOfInput - cur
 		}
-		encryptBlock := dc[cur:cur+tmpSize]
+		encryptBlock := dc[cur : cur+tmpSize]
 		tmpMsg := new(big.Int)
 		tmpMsg.SetBytes(encryptBlock)
 		tmpMsg = key.encodeBigInt(tmpMsg)
 
 		msgBitLen := tmpMsg.BitLen()
-		zeroFlag := msgBitLen % 8 == 0
+		zeroFlag := msgBitLen%8 == 0
 		byteLen := msgBitLen / 8
 		if !zeroFlag {
 			byteLen++
 		}
 		gap := blockByteLength - byteLen
 		var frontZeros []byte
-		for i:=0;i<gap;i++ {
+		for i := 0; i < gap; i++ {
 			frontZeros = append(frontZeros, byte(0))
 		}
 		byteMatrix = append(byteMatrix, append(frontZeros, tmpMsg.Bytes()...))
@@ -55,7 +55,7 @@ func decodeBlocks(key Key, deText string) *Blocks {
 }
 
 func EncodeMsg(key Key, input string) string {
-	blocks := paddingPKCS1(input, key.getNLength(), key.isPublic())
+	blocks := paddingPKCS1(input, key.getNLength(), key.IsPublic())
 	encodedStr := encodeBlocks(key, blocks)
 	return encodedStr
 }
@@ -73,4 +73,3 @@ func Sign(key Key, input string) string {
 	signature := EncodeMsg(key, string(digest))
 	return signature
 }
-
