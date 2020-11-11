@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golangv/rsa"
 )
@@ -12,6 +13,7 @@ type Server struct {
 func NewServer() *Server {
 	s := new(Server)
 	s.g = gin.New()
+	s.g.Use(cors.Default())
 
 	s.g.GET("keys", s.getKeys)
 	s.g.POST("encode", s.encodeMsg)
