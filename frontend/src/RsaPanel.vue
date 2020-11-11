@@ -54,10 +54,10 @@
                            class="gen-select"
                            placeholder="请选择生成密钥的位数">
                   <el-option
-                    v-for="item in gen_options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                      v-for="item in gen_options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -85,7 +85,7 @@
                           placeholder="请在此输入需要加密/签名的明文消息">
                 </el-input>
               </el-form-item>
-              <el-form-item label="加密后的消息">
+              <el-form-item label="加密消息">
                 <el-input v-model="msgForm.encodedMsg"
                           type="textarea"
                           disabled
@@ -93,7 +93,7 @@
                           placeholder="加密后的消息">
                 </el-input>
               </el-form-item>
-              <el-form-item label="解密后的消息">
+              <el-form-item label="解密消息">
                 <el-input v-model="msgForm.decodedMsg"
                           type="textarea"
                           disabled
@@ -104,25 +104,26 @@
               <el-form-item label="数字签名">
                 <el-input v-model="msgForm.signature"
                           type="textarea"
+                          disabled
                           :autosize="{ minRows: 2}"
                           placeholder="数字签名">
                 </el-input>
               </el-form-item>
               <el-form-item style="display: flex; justify-content: left;">
-                <el-button type="primary">公钥加密</el-button>
-                <el-button type="primary">私钥解密</el-button>
+                <el-button type="primary" @click="encodeWithPublicKey">公钥加密</el-button>
+                <el-button type="primary" @click="decodeWithPrivateKey">私钥解密</el-button>
               </el-form-item>
               <el-form-item style="display: flex; justify-content: left;">
-                <el-button type="success">公钥加密</el-button>
-                <el-button type="success">私钥解密</el-button>
+                <el-button type="success" @click="encodeWithPrivateKey">私钥加密</el-button>
+                <el-button type="success" @click="decodeWithPublicKey">公钥解密</el-button>
               </el-form-item>
               <el-form-item style="display: flex; justify-content: left;">
-                <el-button type="info">公钥签名</el-button>
-                <el-button type="info">私钥验证</el-button>
+                <el-button type="info" @click="signWithPublicKey">公钥签名</el-button>
+                <el-button type="info" @click="verifyWithPrivateKey">私钥验证</el-button>
               </el-form-item>
               <el-form-item style="display: flex; justify-content: left;">
-                <el-button type="warning">私钥签名</el-button>
-                <el-button type="warning">公钥验证</el-button>
+                <el-button type="warning" @click="signWithPrivateKey">私钥签名</el-button>
+                <el-button type="warning" @click="verifyWithPublicKey">公钥验证</el-button>
               </el-form-item>
             </el-form>
           </el-col>
@@ -135,30 +136,31 @@
 </template>
 
 <script>
-  const baseUrl = 'http://localhost:8080/'
-  // import qs from 'qs'
-  export default {
-    name: "RsaPanel",
-    data() {
-      return {
-        keysForm: {
-          n_len: 0,
-          n_val: '',
-          e_val: '',
-          d_val: '',
-          p_val: '',
-          q_val: '',
-        },
-        msgForm: {
-          msg: '',
-          encodedMsg: '',
-          decodedMsg: '',
-          signature: '',
-        },
-        gen_key_form: {
-          n_len: 256,
-        },
-        gen_options: [{
+const baseUrl = 'http://localhost:8080/'
+// import qs from 'qs'
+export default {
+  name: "RsaPanel",
+  data() {
+    return {
+      keysForm: {
+        n_len: 0,
+        n_val: '',
+        e_val: '',
+        d_val: '',
+        p_val: '',
+        q_val: '',
+      },
+      msgForm: {
+        msg: '',
+        encodedMsg: '',
+        decodedMsg: '',
+        signature: '',
+      },
+      gen_key_form: {
+        n_len: 256,
+      },
+      gen_options: [
+        {
           value: 256,
           label: '256位',
         }, {
@@ -173,39 +175,226 @@
         }, {
           value: 2048,
           label: '2048位',
-        }],
-      };
+        }
+      ],
+    };
+  },
+  methods: {
+    onRequestGenKey() {
+      this.$http.get(baseUrl + `keys?n_byte=${this.gen_key_form.n_len}`)
+          .then(res => {
+            console.log(res)
+            if (res.data.ok) {
+              Object.assign(this.keysForm, res.data.privateKey)
+              this.keysForm.e_val = res.data.publicKey.e_val
+            } else {
+              console.log("不ok")
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
     },
-    methods: {
-      onRequestGenKey() {
-        this.$http.get(baseUrl + `keys?n_byte=${this.gen_key_form.n_len}`)
-        .then(res => {
-          console.log(res)
-          if (res.data.ok) {
-            Object.assign(this.keysForm, res.data.privateKey)
-            this.keysForm.e_val = res.data.publicKey.e_val
-          } else {
-            console.log("不ok")
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      },
+    encodeWithPublicKey() {
+      this.$http.post(baseUrl + 'encode', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          e_val: this.keysForm.e_val,
+        },
+        msg: this.msgForm.msg
+      })
+      .then(res => {
+        console.log(res)
+        if(res.data.ok) {
+          this.msgForm.encodedMsg = res.data.encodedMsg
+        } else {
+          console.log('error encountered')
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
     },
-  };
+    encodeWithPrivateKey() {
+      this.$http.post(baseUrl + 'encode', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          d_val: this.keysForm.d_val,
+          p_val: this.keysForm.p_val,
+          q_val: this.keysForm.q_val,
+        },
+        msg: this.msgForm.msg
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              this.msgForm.encodedMsg = res.data.encodedMsg
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    decodeWithPublicKey() {
+      this.$http.post(baseUrl + 'decode', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          e_val: this.keysForm.e_val,
+        },
+        msg: this.msgForm.encodedMsg
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              this.msgForm.decodedMsg = res.data.decodedMsg
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    decodeWithPrivateKey() {
+      this.$http.post(baseUrl + 'decode', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          d_val: this.keysForm.d_val,
+          p_val: this.keysForm.p_val,
+          q_val: this.keysForm.q_val,
+        },
+        msg: this.msgForm.encodedMsg
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              this.msgForm.decodedMsg = res.data.decodedMsg
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    signWithPublicKey() {
+      this.$http.post(baseUrl + 'sign', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          e_val: this.keysForm.e_val,
+        },
+        msg: this.msgForm.msg
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              this.msgForm.signature = res.data.signature
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    verifyWithPrivateKey() {
+      this.$http.post(baseUrl + 'verify', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          d_val: this.keysForm.d_val,
+          p_val: this.keysForm.p_val,
+          q_val: this.keysForm.q_val,
+        },
+        msg: this.msgForm.msg,
+        signature: this.msgForm.signature,
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              if(res.data.verified) {
+                this.$message.success('验证成功！签名与文本正确对应！')
+              } else {
+                this.$message.warning('验证失败！消息已经被篡改！')
+              }
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    signWithPrivateKey() {
+      this.$http.post(baseUrl + 'sign', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          d_val: this.keysForm.d_val,
+          p_val: this.keysForm.p_val,
+          q_val: this.keysForm.q_val,
+        },
+        msg: this.msgForm.msg
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              this.msgForm.signature = res.data.signature
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+    verifyWithPublicKey() {
+      this.$http.post(baseUrl + 'verify', {
+        key: {
+          n_len: this.keysForm.n_len,
+          n_val: this.keysForm.n_val,
+          e_val: this.keysForm.e_val,
+        },
+        msg: this.msgForm.msg,
+        signature: this.msgForm.signature,
+      })
+          .then(res => {
+            console.log(res)
+            if(res.data.ok) {
+              if(res.data.verified) {
+                this.$message.success('验证成功！签名与文本正确对应！')
+              } else {
+                this.$message.warning('验证失败！消息已经被篡改！')
+              }
+            } else {
+              console.log('error encountered')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+    },
+  },
+};
 </script>
 
 <style lang="scss"
        scoped>
-  .title {
-    font-size: 40px;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
+.title {
+  font-size: 40px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
 
-  .gen-select {
-    width: 100%;
-  }
+.gen-select {
+  width: 100%;
+}
 
 </style>
