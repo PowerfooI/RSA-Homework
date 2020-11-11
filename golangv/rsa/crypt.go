@@ -60,10 +60,13 @@ func EncodeMsg(key Key, input string) string {
 	return encodedStr
 }
 
-func DecodeMsg(key Key, input string) string {
+func DecodeMsg(key Key, input string) (string, error) {
 	blocks := decodeBlocks(key, input)
-	decodedStr := depaddingPKCS1(blocks)
-	return decodedStr
+	decodedStr, err := depaddingPKCS1(blocks)
+	if err != nil {
+		return "", err
+	}
+	return decodedStr, nil
 }
 
 func Sign(key Key, input string) string {
@@ -72,4 +75,19 @@ func Sign(key Key, input string) string {
 	digest := m.Sum(nil)
 	signature := EncodeMsg(key, string(digest))
 	return signature
+}
+
+func Verify(key Key, input, signature string) (bool, error) {
+	originalDigest, err := DecodeMsg(key, signature)
+	if err != nil {
+		return false, err
+	}
+	m := md5.New()
+	m.Write([]byte(input))
+	digest := string(m.Sum(nil))
+	if originalDigest != digest {
+		return false, nil
+	} else {
+		return true, nil
+	}
 }

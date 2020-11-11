@@ -87,7 +87,15 @@ func (s *Server) decodeMsg(c *gin.Context) {
 		})
 		return
 	}
-	output := rsa.DecodeMsg(k, body.Msg)
+	output, err := rsa.DecodeMsg(k, body.Msg)
+	if err != nil {
+		log.WithError(err).Error("解密请求错误")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ok":  false,
+			"msg": "please use correct key for decoding",
+		})
+		return
+	}
 	log.WithField("decodedMsg", output).Info("成功解密")
 	c.JSON(http.StatusOK, gin.H{
 		"ok":         true,
@@ -127,5 +135,46 @@ func (s *Server) signMsg(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"ok":        true,
 		"signature": output,
+	})
+}
+
+func (s *Server) verifySignature(c *gin.Context) {
+	var err error
+	body := struct {
+		Key       *Key   `json:"key"`
+		Signature string `json:"signature"`
+		Msg       string `json:"msg"`
+	}{}
+	err = c.ShouldBind(&body)
+
+	if err != nil {
+		log.WithError(err).Error("验证签名请求错误")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ok":  false,
+			"msg": "wrong parameter",
+		})
+		return
+	}
+	k, err := genKeyTypeFromStr(body.Key)
+	if err != nil {
+		log.WithError(err).Error("验证签名请求错误")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ok":  false,
+			"msg": "bad pattern in keys",
+		})
+		return
+	}
+	ok, err := rsa.Verify(k, body.Msg, body.Signature)
+	if err != nil {
+		log.WithError(err).Error("验证签名请求错误")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"ok":  false,
+			"msg": "签名解密失败，签名被篡改或者密钥使用不正确",
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"ok":       true,
+		"verified": ok,
 	})
 }

@@ -42,6 +42,9 @@ func genKeyTypeFromStr(k *Key) (rsa.Key, error) {
 			EValue:  eVal,
 		}, nil
 	} else {
+		if k.DValue == "" || k.PValue == "" || k.QValue == "" {
+			return nil, errors.New("d, p, q are all required for private key")
+		}
 		dVal, ok := new(big.Int).SetString(k.DValue, 16)
 		if !ok {
 			return nil, errors.New("illegal hex pattern of key")

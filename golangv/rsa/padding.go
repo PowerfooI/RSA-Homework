@@ -1,6 +1,9 @@
 package rsa
 
-import "math/rand"
+import (
+	"errors"
+	"math/rand"
+)
 
 var (
 	paddingSize = 11
@@ -52,7 +55,7 @@ func paddingPKCS1(rawTextInput string, nBitSize int, isPublic bool) *Blocks {
 
 			// 恰好相等时填充一整块
 			var backPaddingContent []byte
-			for i:=0;i<pieceSize;i++ {
+			for i := 0; i < pieceSize; i++ {
 				backPaddingContent = append(backPaddingContent, byte(pieceSize))
 			}
 			byteMatrix = append(byteMatrix, append(paddingContent, backPaddingContent...))
@@ -67,17 +70,22 @@ func paddingPKCS1(rawTextInput string, nBitSize int, isPublic bool) *Blocks {
 	return paddedBlocks
 }
 
-func depaddingPKCS1(blocks *Blocks) string {
+func depaddingPKCS1(blocks *Blocks) (string, error) {
 	nBlocks := len(blocks.byteMatrix)
 	blockLen := len(blocks.byteMatrix[0])
-	res := ""
+	var res []byte
 	for i, b := range blocks.byteMatrix {
 		if i == nBlocks-1 {
 			backPaddingSize := int(b[blockLen-1])
-			res += string(b[paddingSize : len(b)-backPaddingSize])
+			if backPaddingSize+paddingSize > len(b) {
+				return "", errors.New("fail in depadding")
+			} else {
+				res = append(res, b[paddingSize:len(b)-backPaddingSize]...)
+			}
 		} else {
-			res += string(b[paddingSize:])
+			res = append(res, b[paddingSize:]...)
 		}
 	}
-	return res
+	resStr := string(res)
+	return resStr, nil
 }

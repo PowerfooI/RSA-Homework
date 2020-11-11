@@ -17,6 +17,7 @@ func NewServer() *Server {
 	s.g.POST("encode", s.encodeMsg)
 	s.g.POST("decode", s.decodeMsg)
 	s.g.POST("sign", s.signMsg)
+	s.g.POST("verify", s.verifySignature)
 
 	return s
 }
