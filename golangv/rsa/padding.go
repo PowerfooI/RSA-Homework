@@ -71,6 +71,9 @@ func paddingPKCS1(rawTextInput string, nBitSize int, isPublic bool) *Blocks {
 
 func depaddingPKCS1(blocks *Blocks) (string, error) {
 	nBlocks := len(blocks.byteMatrix)
+	if nBlocks == 0 {
+		return "", errors.New("empty blocks")
+	}
 	blockLen := len(blocks.byteMatrix[0])
 	var res []byte
 	for i, b := range blocks.byteMatrix {

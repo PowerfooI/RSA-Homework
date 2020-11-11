@@ -155,7 +155,7 @@
 </template>
 
 <script>
-  const baseUrl = 'http://localhost:8080/';
+  const baseUrl = '/api/';
   // import qs from 'qs'
   export default {
     name: "RsaPanel",
@@ -284,7 +284,7 @@
           })
           .catch(err => {
             console.log(err);
-            this.$message.error('解密失败，请使用配对密钥进行解密');
+            this.$message.error('解密失败，消息为空或密钥不对应');
           });
       },
       decodeWithPrivateKey() {
@@ -309,7 +309,7 @@
           })
           .catch(err => {
             console.log(err);
-            this.$message.error('解密失败，请使用配对密钥进行解密');
+            this.$message.error('解密失败，消息为空或密钥不对应');
           });
       },
       signWithPublicKey() {
