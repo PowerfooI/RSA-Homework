@@ -187,8 +187,9 @@ export default {
             if (res.data.ok) {
               Object.assign(this.keysForm, res.data.privateKey)
               this.keysForm.e_val = res.data.publicKey.e_val
+              this.$message.success(`密钥对生成成功，用时 ${res.data.costTime} ms`)
             } else {
-              console.log("不ok")
+              this.$message.warning('有点问题')
             }
           })
           .catch(err => {

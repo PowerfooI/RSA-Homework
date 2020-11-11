@@ -9,7 +9,6 @@ var (
 	paddingSize = 11
 )
 
-// 公钥加密类型的padding
 func paddingPKCS1(rawTextInput string, nBitSize int, isPublic bool) *Blocks {
 	nByteSize := nBitSize / 8
 	pieceSize := nByteSize - paddingSize

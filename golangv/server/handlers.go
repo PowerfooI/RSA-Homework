@@ -6,6 +6,7 @@ import (
 	"golangv/rsa"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (s *Server) getKeys(c *gin.Context) {
@@ -18,7 +19,10 @@ func (s *Server) getKeys(c *gin.Context) {
 		})
 		return
 	}
+	start := time.Now()
 	public, private := rsa.GenRSAKeys(int(NumByte), 4)
+	costTime := time.Now().Sub(start)
+
 	log.WithFields(log.Fields{
 		"nByte":   NumByteStr,
 		"public":  public,
@@ -28,6 +32,7 @@ func (s *Server) getKeys(c *gin.Context) {
 		"ok":         true,
 		"publicKey":  genStrFromKeyType(public),
 		"privateKey": genStrFromKeyType(private),
+		"costTime":   costTime.Milliseconds(),
 	})
 }
 

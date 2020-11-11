@@ -17,7 +17,7 @@ func TestPKCS1Padding(t *testing.T) {
 	fmt.Println("og =", originalInput)
 	fmt.Println("ec =", ec)
 	deBlocks := decodeBlocks(pri, ec)
-	dc := depaddingPKCS1(deBlocks)
+	dc, _ := depaddingPKCS1(deBlocks)
 	fmt.Println("dc =", dc)
 }
 
@@ -32,7 +32,7 @@ func Test2(t *testing.T) {
 		fmt.Println(pri.PValue, pri.QValue)
 		fmt.Println(blocks)
 		fmt.Println(deBlocks)
-		dc := depaddingPKCS1(deBlocks)
+		dc, _ := depaddingPKCS1(deBlocks)
 		if dc != originalInput {
 			fmt.Println("Wrong result!")
 		}
@@ -49,7 +49,7 @@ func TestSignature(t *testing.T) {
 	m := md5.New()
 	m.Write([]byte(originalInput))
 	myDigest := string(m.Sum(nil))
-	originalDigest := DecodeMsg(pub, signature)
+	originalDigest, _ := DecodeMsg(pub, signature)
 	fmt.Printf("%x\n", myDigest)
 	fmt.Printf("%x\n", originalDigest)
 }
