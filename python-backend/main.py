@@ -10,7 +10,6 @@ if __name__ == '__main__':
     print('total time = {:.2f}s'.format(end-start))
 
     # test for encryption & decryption
-    # print(publicKey, privateKey)
     msg = 24234
     c_msg = encrypt_msg(publicKey, msg)
     print('encrypt msg = {}'.format(c_msg))

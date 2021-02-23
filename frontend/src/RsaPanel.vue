@@ -9,47 +9,41 @@
             <el-form label-position="left"
                      label-width="120px"
                      :model="keysForm">
-              <el-form-item label="密钥位数">
-                <el-input v-model="keysForm.n_len"
-                          disabled></el-input>
+              <el-form-item label="模N位数">
+                <el-input v-model="keysForm.n_len"></el-input>
               </el-form-item>
               <el-form-item label="密钥N值">
                 <el-input v-model="keysForm.n_val"
                           type="textarea"
-                          :autosize="{ minRows: 2}"
-                          disabled></el-input>
+                          :autosize="{ minRows: 2}"></el-input>
               </el-form-item>
               <el-form-item label="密钥P值">
                 <el-input v-model="keysForm.p_val"
                           type="textarea"
-                          :autosize="{ minRows: 2}"
-                          disabled></el-input>
+                          :autosize="{ minRows: 2}"></el-input>
               </el-form-item>
               <el-form-item label="密钥Q值">
                 <el-input v-model="keysForm.q_val"
                           type="textarea"
-                          :autosize="{ minRows: 2}"
-                          disabled></el-input>
+                          :autosize="{ minRows: 2}"></el-input>
               </el-form-item>
               <el-form-item label="公钥E值">
                 <el-input v-model="keysForm.e_val"
                           type="textarea"
-                          :autosize="{ minRows: 2}"
-                          disabled></el-input>
+                          :autosize="{ minRows: 2}"></el-input>
               </el-form-item>
               <el-form-item label="私钥D值">
                 <el-input v-model="keysForm.d_val"
                           type="textarea"
-                          :autosize="{ minRows: 2}"
-                          disabled></el-input>
+                          :autosize="{ minRows: 2}"></el-input>
               </el-form-item>
             </el-form>
           </el-col>
           <el-col class="op-unit">
             <el-form label-position="left"
-                     label-width="120px"
+                     label-width="160px"
                      :model="gen_key_form">
-              <el-form-item label="生成密钥位数">
+              <el-form-item label="生成密钥的模N位数">
                 <el-select v-model="gen_key_form.n_len"
                            class="gen-select"
                            placeholder="请选择生成密钥的位数">
@@ -91,7 +85,6 @@
               <el-form-item label="加密消息">
                 <el-input v-model="msgForm.encodedMsg"
                           type="textarea"
-                          disabled
                           :autosize="{ minRows: 3}"
                           placeholder="加密后的消息">
                 </el-input>
@@ -183,13 +176,13 @@
         gen_options: [
           {
             value: 256,
-            label: '256位',
+            label: '256位(极不安全)',
           }, {
             value: 512,
-            label: '512位',
+            label: '512位(极不安全)',
           }, {
             value: 768,
-            label: '768位',
+            label: '768位(不安全)',
           }, {
             value: 1024,
             label: '1024位',
