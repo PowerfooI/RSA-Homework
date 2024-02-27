@@ -1,21 +1,21 @@
-# 《应用密码学》 RSA 期中作业
+# RSA Midterm Assignment of *Applied Cryptography*
 
-### 实现说明
+### Implementation Details
 
-* 幂模运算 - Montgomery 幂模算法
-* 素数生成 - Miller-Rabin 素性检测
-* 填充方法 - PKCS #1 v1.5
+* Modular Exponentiation - Montgomery Modular Exponentiation Algorithm
+* Prime Number Generation - Miller-Rabin Primality Test
+* Padding Method - PKCS #1 v1.5
 
-![前端页面](/images/frontend.png)
+![Frontend page](/images/frontend.png)
 
-### 目录结构
+### Functionality Description
 
-- `backend`: golang 后端，功能完整
-- `python-backend`: python 后端，只实现到密钥生成和加解密
-- `frontend`: vue 前端
+* Provides key generation for 256, 512, 768, 1024, and 2048-bit RSA keys, with the ability to copy the keys with one click.
+* Public key encryption + private key decryption, private key encryption + public key decryption, public key signing + private key verification, and private key signing + public key verification.
 
-### 功能说明
 
-* 提供了 256，512，768，1024 和 2048 位 RSA 密钥的生成，能够一键复制；
-* 除了密钥的生成，还提供公钥加密+私钥解密、私钥加密+公钥解密、公钥签名+私钥验证和私钥签名+公钥验证这些功能。
+### Structure
 
+- `backend`: Golang backend with complete functionality
+- `python-backend`: Python backend, only implements key generation and encryption/decryption
+- `frontend`: Vue frontend
